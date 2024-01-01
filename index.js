@@ -6,7 +6,10 @@ import userRouter from "./routes/user.js";
 import tourRouter from "./routes/tour.js";
 import dotenv from "dotenv";
 import path from "path";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const app = express();
 dotenv.config();
 
@@ -17,13 +20,13 @@ app.use(cors());
 
 app.use("/users", userRouter); // http://localhost:5000/users/signup
 app.use("/tour", tourRouter);
-app.get("/", (req, res) => {
-  res.send("Welcome to tour API");
+
+app.use(express.static(path.join(__dirname, "./client/build")));
+
+app.get("*", function (req, res) {
+  res.sendFile(path.join(__dirname, "./client/build/index.html"));
 });
-server.use(express.static(path.resolve(__dirname, "./client/build")));
-server.use("*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-});
+
 const port = process.env.PORT || 5000;
 
 mongoose
